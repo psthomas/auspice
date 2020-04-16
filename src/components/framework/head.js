@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { hasExtension, getExtension } from "../../util/extensions";
+import nextstrainLogo from "../../images/nextstrain-logo-small.png";
 
 const Head = ({metadata, general}) => {
   const lang = general.language;
@@ -23,10 +24,20 @@ const Head = ({metadata, general}) => {
     defaultNS: 'translation'
   });
 
+  let url = `${window.location.origin}${window.location.pathname}`;
+
   let pageTitle = "auspice";
   if (hasExtension("browserTitle")) {
     pageTitle = getExtension("browserTitle");
   }
+
+  let socialImagePath = nextstrainLogo;
+  if (hasExtension("socialComponent")) {
+    const getSocialImage = getExtension("socialComponent");
+    socialImagePath = getSocialImage(window.location.pathname);
+  }
+  let socialImageUrl = `${window.location.origin}${socialImagePath}`;
+
   const displayedDataset = window.location.pathname
     .replace(/^\//g, '')
     .replace(/\/$/g, '')
@@ -40,9 +51,29 @@ const Head = ({metadata, general}) => {
       <title>
         {pageTitle}
       </title>
+
+      {/* General tags */}
       {metadata && metadata.title ?
         <meta name="description" content={metadata.title} /> :
         null}
+      <meta name="image" content={socialImageUrl} />
+
+      {/* OpenGraph tags */}
+      <meta property="og:url" content={url} />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={pageTitle} />
+      {metadata && metadata.title ?
+        <meta property="og:description" content={metadata.title} /> :
+        null}
+      <meta property="og:image" content={socialImageUrl} />
+
+      {/* Twitter Card tags */}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={pageTitle} />
+      {metadata && metadata.title ?
+        <meta name="twitter:description" content={metadata.title} /> :
+        null}
+      <meta name="twitter:image" content={socialImageUrl} />
     </Helmet>
   );
 };
