@@ -23,6 +23,11 @@ const Head = ({metadata, general}) => {
     defaultNS: 'translation'
   });
 
+  let SocialTags;
+  if (hasExtension("socialComponent")) {
+    SocialTags = getExtension("socialComponent");
+  }
+
   let pageTitle = "auspice";
   if (hasExtension("browserTitle")) {
     pageTitle = getExtension("browserTitle");
@@ -36,14 +41,19 @@ const Head = ({metadata, general}) => {
     pageTitle = pageTitle + " / " + displayedDataset;
   }
   return (
-    <Helmet>
-      <title>
-        {pageTitle}
-      </title>
-      {metadata && metadata.title ?
-        <meta name="description" content={metadata.title} /> :
+    <div>
+      <Helmet>
+        <title>
+          {pageTitle}
+        </title>
+        {metadata && metadata.title ?
+          <meta name="description" content={metadata.title} /> :
+          null}
+      </Helmet>
+      {SocialTags ?
+        <SocialTags metadata={metadata} pageTitle={pageTitle} /> :
         null}
-    </Helmet>
+    </div>
   );
 };
 
